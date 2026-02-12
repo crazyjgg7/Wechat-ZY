@@ -95,8 +95,13 @@
     </view>
 
     <view class="footer-actions">
-      <button class="home-btn" bindtap="goHome">返回首页</button>
+      <button class="action-btn share-btn" open-type="share">转发</button>
+      <button class="action-btn poster-btn" bindtap="generatePoster">生成海报</button>
+      <button class="action-btn home-btn" bindtap="goHome">回首页</button>
     </view>
 
   </scroll-view>
+  
+  <!-- Hidden Canvas for Poster Generation -->
+  <canvas type="2d" id="posterCanvas" style="width: 375px; height: 600px; position: fixed; left: -9999px;"></canvas>
 </view>

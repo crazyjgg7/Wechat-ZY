@@ -184,6 +184,12 @@
   border: 1px solid rgba(189, 151, 89, 0.2);
 }
 
+/* Analysis Card */
+.card-title {
+  /* ... */
+
+/* ... */
+
 .footer-actions {
   position: fixed;
   bottom: 0;
@@ -193,15 +199,36 @@
   background: var(--color-surface);
   box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   z-index: 100;
+}
+
+.action-btn {
+  width: 90px !important;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 20px;
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+}
+
+.share-btn {
+  background: #07c160;
+  color: white;
+  box-shadow: 0 4px 12px rgba(7, 193, 96, 0.3);
+}
+
+.poster-btn {
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(189, 151, 89, 0.3);
 }
 
 .home-btn {
   background: var(--color-surface-variant);
   color: var(--color-text-primary);
-  width: 80%;
-  border-radius: 25px;
 }
 
 .retry-btn {
