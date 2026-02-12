@@ -1,55 +1,102 @@
 <view class="container">
   <!-- Loading State -->
   <view class="loading-state" wx:if="{{loading}}">
-    <!-- Simple spinner using CSS -->
     <view class="spinner"></view>
-    <text>正在解卦，请诚心等待...</text>
+    <text>正在向天问道...</text>
   </view>
 
   <!-- Error State -->
   <view class="error-state" wx:elif="{{error}}">
-    <icon type="warn" size="64" color="#F76260"></icon>
-    <text class="error-text">{{errorMsg}}</text>
-    <button class="retry-btn" bindtap="retryFetch">重试</button>
+    <icon type="warn" size="64" color="#F56C6C"></icon>
+    <text>{{errorMsg}}</text>
+    <button class="retry-btn" bindtap="goHome">返回首页</button>
   </view>
 
-  <!-- Result State -->
-  <scroll-view scroll-y class="result-content" wx:else>
-    <view class="header">
-      <view class="symbol">{{hexagram.symbol}}</view>
-      <view class="name">{{hexagram.name}}</view>
-    </view>
-
-    <!-- Base Judgement -->
-    <view class="card">
-      <text class="card-title">卦辞</text>
-      <text class="card-body">{{hexagram.judgment}}</text>
-    </view>
-
-    <view class="card">
-      <text class="card-title">象辞</text>
-      <text class="card-body">{{hexagram.image}}</text>
-    </view>
-
-    <!-- Main Interpretation -->
-    <view class="card highlight">
-      <text class="card-title">综合解读</text>
-      <text class="card-body interpretation">{{hexagram.interpretation}}</text>
-    </view>
-
-    <!-- Changing Lines / Hexagram -->
-    <view class="card" wx:if="{{hexagram.is_changing && hexagram.changing_hexagram}}">
-      <text class="card-title">变卦：{{hexagram.changing_hexagram.name}} {{hexagram.changing_hexagram.symbol}}</text>
-      <view class="sub-card">
-        <text class="sub-title">变卦卦辞：</text>
-        <text class="card-body">{{hexagram.changing_hexagram.judgment}}</text>
-      </view>
-      <view class="sub-card">
-        <text class="sub-title">变卦解读：</text>
-        <text class="card-body">{{hexagram.changing_hexagram.interpretation}}</text>
-      </view>
-    </view>
+  <!-- Result Content -->
+  <scroll-view class="result-content" scroll-y wx:else>
     
-    <button class="back-btn" hover-class="btn-hover" bindtap="goHome">返回首页，再卜一卦</button>
+    <!-- Base Hexagram Card -->
+    <view class="card base-hexagram">
+      <view class="hex-header">
+        <view class="hex-symbol">{{result.hexagram.symbol}}</view>
+        <view class="hex-info">
+          <text class="hex-name">{{result.hexagram.name}}卦</text>
+          <text class="hex-structure">{{result.hexagram.upper_trigram}}上{{result.hexagram.lower_trigram}}下</text>
+        </view>
+      </view>
+      <view class="hex-text">
+        <view class="section-title">卦辞</view>
+        <text class="text-content">{{result.hexagram.judgment}}</text>
+        <view class="section-title">象曰</view>
+        <text class="text-content">{{result.hexagram.image}}</text>
+      </view>
+    </view>
+
+    <!-- General Analysis Card -->
+    <view class="card analysis-card">
+      <view class="card-title">综合分析</view>
+      <view class="analysis-section">
+        <text class="analysis-text">{{result.analysis.overall}}</text>
+      </view>
+      
+      <view class="analysis-section" wx:if="{{result.analysis.solar_term}}">
+        <text class="label">节气旺衰：</text>
+        <text>{{result.analysis.solar_term}}</text>
+      </view>
+
+      <view class="analysis-section" wx:if="{{result.analysis.five_elements}}">
+        <text class="label">五行生克：</text>
+        <text>{{result.analysis.five_elements}}</text>
+      </view>
+    </view>
+
+    <!-- Do / Dont Card -->
+    <view class="card do-dont-card" wx:if="{{result.do_dont}}">
+      <view class="half-section do-section">
+        <text class="section-header do-header">宜</text>
+        <block wx:for="{{result.do_dont.do}}" wx:key="index">
+          <text class="item do-item">✅ {{item}}</text>
+        </block>
+      </view>
+      <view class="half-section dont-section">
+        <text class="section-header dont-header">忌</text>
+        <block wx:for="{{result.do_dont.dont}}" wx:key="index">
+          <text class="item dont-item">❌ {{item}}</text>
+        </block>
+      </view>
+    </view>
+
+    <!-- Changing Lines (Active Lines) -->
+    <view class="card lines-card" wx:if="{{result.analysis.active_lines && result.analysis.active_lines.length > 0}}">
+      <view class="card-title">动爻解读</view>
+      <block wx:for="{{result.analysis.active_lines}}" wx:key="index">
+        <view class="line-item">
+          <text>{{item}}</text>
+        </view>
+      </block>
+    </view>
+
+    <!-- Changing Hexagram (If any) -->
+    <view class="card changing-hex-card" wx:if="{{result.changing_hexagram}}">
+      <view class="card-title">变卦：{{result.changing_hexagram.name}}</view>
+      <view class="hex-header small">
+        <view class="hex-symbol">{{result.changing_hexagram.symbol}}</view>
+        <view class="hex-text">
+          <text class="text-content">{{result.changing_hexagram.judgment}}</text>
+          <text class="text-content sub">{{result.changing_hexagram.interpretation}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Advice Card -->
+    <view class="card advice-card">
+      <view class="card-title">趋吉避凶</view>
+      <text class="advice-text">{{result.analysis.advice}}</text>
+    </view>
+
+    <view class="footer-actions">
+      <button class="home-btn" bindtap="goHome">返回首页</button>
+    </view>
+
   </scroll-view>
 </view>

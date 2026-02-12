@@ -1,4 +1,5 @@
 <view class="container">
   <view class="title">CyberYJ 六爻卜卦</view>
   <button class="start-btn" hover-class="btn-hover" bindtap="startDivination">开始卜卦</button>
+  <button class="history-btn" hover-class="btn-hover" bindtap="viewHistory">我的卜卦</button>
 </view>

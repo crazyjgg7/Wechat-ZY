@@ -36,30 +36,41 @@
 
 ```json
 {
-  "hexagram_code": "101010",       // 本卦的二进制编码 (从初爻到上爻: 0=阴, 1=阳)
-                                   // 例如: [6(阴), 7(阳), 8(阴), 9(阳), 7(阳), 7(阳)] -> 010111
-  
-  "name": "未济",                  // 本卦卦名
-  "symbol": "䷿",                  // 本卦符号
-  
-  "judgment": "未济：亨，小狐汔济，濡其尾，无攸利。", // 本卦卦辞
-  
-  "image": "火在水上，未济；君子以慎辨物居方。",     // 本卦象辞
-  
-  "interpretation": "...",         // 【重点】综合解读文本（包含变卦分析，如果有）
-                                   // 后端应整合卦辞、变爻辞、五行生克等，输出对用户友好的自然语言段落。
-  
-  "is_changing": true,             // 是否存在变卦
-  
-  "changing_hexagram": {           // 变卦信息（若无变爻则为 null）
-      "code": "111110",
-      "name": "姤",
-      "symbol": "䷫",
-      "judgment": "...",
-      "interpretation": "..."      // 变卦的解读
+  "hexagram": {
+      "code": "101010",           // 本卦二进制 (初爻->上爻)
+      "name": "未济",
+      "symbol": "䷿",
+      "judgment": "未济：亨，小狐汔济...",
+      "image": "火在水上，未济...",
+      "upper_trigram": "离",
+      "lower_trigram": "坎"
   },
   
-  "changed_lines": [1, 4]          // 变爻位置（1-6），对应输入数组索引+1
+  "changing_hexagram": {          // 变卦 (若无变爻则为 null)
+      "code": "111111",
+      "name": "乾",
+      "symbol": "䷀",
+      "judgment": "乾：元亨利贞...",
+      "image": "天行健..."
+  },
+  
+  "analysis": {
+      "overall": "...",           // 综合解读
+      "active_lines": ["初六：濡其尾，吝。"], // 动爻爻辞
+      "five_elements": "...",     // 五行生克分析
+      "solar_term": "...",        // 节气旺衰分析
+      "advice": "..."             // 趋吉避凶建议
+  },
+
+  "do_dont": {
+      "do": ["..."],
+      "dont": ["..."]
+  },
+
+  "trace": [                      // 推导过程 (调试用)
+      "Step 1: Generated hexagram...",
+      "Step 2: Analyzed changing lines..."
+  ]
 }
 ```
 
@@ -69,55 +80,52 @@
 {
   "error": {
     "code": "INVALID_INPUT",
-    "message": "coins 数组长度必须为 6，且元素值为 6,7,8,9 之一"
+    "message": "coins数组必须包含6个元素 (6/7/8/9)"
   }
 }
 ```
 
-## 3. 逻辑说明
+## 3. 核心逻辑要求 (Backend Implementation)
 
-后端需实现以下转换逻辑：
+后端服务需实现 `CyberYJ` 工具链的适配器模式：
 
-1.  **输入校验**：确保 `coins` 数组长度为 6，仅包含 `[6, 7, 8, 9]`。
-2.  **本卦生成**：
-    - 6 (老阴) -> 0 (阴)
-    - 7 (少阳) -> 1 (阳)
-    - 8 (少阴) -> 0 (阴)
-    - 9 (老阳) -> 1 (阳)
-3.  **变卦生成**：
-    - 6 (老阴) -> 1 (阳) [变]
-    - 7 (少阳) -> 1 (阳) [不变]
-    - 8 (少阴) -> 0 (阴) [不变]
-    - 9 (老阳) -> 0 (阴) [变]
-4.  **调用 CyberYJ 核心**：利用现有的 `hexagram_analyzer` 对生成的本卦和变卦进行分析。
-5.  **返回结果**：组装 JSON 响应。
+1.  **输入转换**:
+    - 前端传入 `coins` 数组 `[6,7,8,9,7,7]`。
+    - 后端需将其转换为 `CyberYJ.FengshuiDivinationTool` 所需的 `upper_trigram` / `lower_trigram` / `changing_line`。
+    - **转换规则**:
+      - 6 (老阴) -> 0 (阴, 变)
+      - 7 (少阳) -> 1 (阳, 不变)
+      - 8 (少阴) -> 0 (阴, 不变)
+      - 9 (老阳) -> 1 (阳, 变)
+      - 将6爻分为下三爻(Lower)和上三爻(Upper)，计算对应的八卦名 (e.g., 001 -> 震)。
+
+2.  **调用工具**:
+    - 使用 `FengshuiDivinationTool.execute(...)`。
+    - 传入参数包括 `upper_trigram`, `lower_trigram`, `changing_line` (根据 6/9 的位置确定，1-based index)。
+
+3.  **结果映射**:
+    - 将 `FengshuiDivinationTool` 返回的 Dict 结构映射到上述 JSON 响应格式。
+    - 注意：Markdown 格式的字段 (如 `interpretation`) 可直接透传，或解析为纯文本。
 
 ## 4. 示例
 
-**Example Interaction:**
-
-**Request:**
-```http
-POST /v1/divination/interpret HTTP/1.1
-Content-Type: application/json
-
+**Example Request:**
+```json
 {
-    "coins": [8, 8, 8, 8, 8, 8],
-    "question": "测试全阴"
+    "coins": [8,8,8, 9,8,8], // 第四爻变 (9)
+    "question": "测试变卦"
 }
 ```
 
-**Response:**
+**Example Response:**
 ```json
 {
-    "hexagram_code": "000000",
-    "name": "坤",
-    "symbol": "䷁",
-    "judgment": "坤：元亨，利牝马之贞。君子有攸往，先迷后得主，利西南得朋，东北丧朋。安贞，吉。",
-    "image": "地势坤，君子以厚德载物。",
-    "interpretation": "坤卦代表至柔至顺...",
-    "is_changing": false,
-    "changing_hexagram": null,
-    "changed_lines": []
+    "hexagram": { "name": "豫", "symbol": "䷏" },
+    "changing_hexagram": { "name": "坤", "symbol": "䷁" },
+    "analysis": {
+        "overall": "豫卦变为坤卦，象征快乐之后通过顺从而获得安宁...",
+        "advice": "宜居安思危..."
+    }
+    // ...
 }
 ```
