@@ -1,28 +1,34 @@
 <view class="container">
+  <!-- Mode Switch -->
+  <view class="mode-switch" bindtap="toggleMode" wx:if="{{isGyroSupported}}">
+    <text class="mode-text">{{mode === 'gyro' ? '切换手动模式' : '切换感应模式'}}</text>
+  </view>
+
   <view class="hint-area">
-    <text class="hint-text">{{status === 'complete' ? '卦象已成，点击查看' : '请诚心默念问题，点击按钮摇卦'}}</text>
+    <block wx:if="{{status === 'complete'}}">
+      <text class="hint-text">卦象已成，点击查看</text>
+    </block>
+    <block wx:else>
+      <text class="hint-text" wx:if="{{mode === 'gyro'}}">{{status === 'shaking' ? '感应中...' : '请摇晃手机起卦'}}</text>
+      <text class="hint-text" wx:else>请点击按钮起卦</text>
+    </block>
     <text class="sub-hint">{{lines.length}}/6 爻</text>
   </view>
 
-  <view class="lines-area">
-    <!-- Lines are stacked from bottom (index 0) to top (index 5) -->
-    <!-- Flex-direction column-reverse -> First DOM element (index 0) is at bottom -->
+  <view class="lines-area {{status === 'shaking' ? 'shaking-anim' : ''}}">
     <block wx:for="{{lines}}" wx:key="index">
-      <view class="line-row">
+      <view class="line-row fade-in">
         <view class="line-label">
           <text wx:if="{{item === 6}}">X</text>
           <text wx:if="{{item === 9}}">O</text>
         </view>
         
-        <!-- Yin Line (6, 8) -->
         <view class="line yin" wx:if="{{item === 6 || item === 8}}">
           <view class="bar"></view>
-          <!-- Gap for Yin -->
           <view class="gap"></view>
           <view class="bar"></view>
         </view>
         
-        <!-- Yang Line (7, 9) -->
         <view class="line yang" wx:if="{{item === 7 || item === 9}}">
           <view class="bar-full"></view>
         </view>
@@ -35,9 +41,9 @@
       class="action-btn {{status === 'complete' ? 'finish-btn' : ''}}" 
       hover-class="btn-hover" 
       bindtap="handleAction"
-      disabled="{{status === 'loading'}}"
+      disabled="{{mode === 'gyro' && status !== 'complete'}}"
     >
-      {{status === 'complete' ? '查看卦解' : '点击摇卦'}}
+      {{status === 'complete' ? '查看卦解' : (mode === 'gyro' ? '摇一摇起卦' : '点击摇卦')}}
     </button>
   </view>
 </view>
