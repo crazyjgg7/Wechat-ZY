@@ -184,11 +184,7 @@
   border: 1px solid rgba(189, 151, 89, 0.2);
 }
 
-/* Analysis Card */
-.card-title {
-  /* ... */
 
-/* ... */
 
 .footer-actions {
   position: fixed;
