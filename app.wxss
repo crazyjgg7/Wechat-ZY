@@ -1,0 +1,24 @@
+/** app.wxss **/
+page {
+  /* Design Tokens per @frontend-design */
+  --primary-color: #D4AF37; /* Gold */
+  --bg-color: #FAFAFA;      /* Off-white background */
+  --text-main: #333333;     /* Dark Gray Text */
+  --text-secondary: #666666;
+  --spacing-unit: 16rpx;
+  --border-radius: 12rpx;
+  
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,
+    Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei',
+    sans-serif;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 200rpx 0;
+  box-sizing: border-box;
+}

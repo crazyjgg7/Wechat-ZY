@@ -1,0 +1,43 @@
+<view class="container">
+  <view class="hint-area">
+    <text class="hint-text">{{status === 'complete' ? '卦象已成，点击查看' : '请诚心默念问题，点击按钮摇卦'}}</text>
+    <text class="sub-hint">{{lines.length}}/6 爻</text>
+  </view>
+
+  <view class="lines-area">
+    <!-- Lines are stacked from bottom (index 0) to top (index 5) -->
+    <!-- Flex-direction column-reverse -> First DOM element (index 0) is at bottom -->
+    <block wx:for="{{lines}}" wx:key="index">
+      <view class="line-row">
+        <view class="line-label">
+          <text wx:if="{{item === 6}}">X</text>
+          <text wx:if="{{item === 9}}">O</text>
+        </view>
+        
+        <!-- Yin Line (6, 8) -->
+        <view class="line yin" wx:if="{{item === 6 || item === 8}}">
+          <view class="bar"></view>
+          <!-- Gap for Yin -->
+          <view class="gap"></view>
+          <view class="bar"></view>
+        </view>
+        
+        <!-- Yang Line (7, 9) -->
+        <view class="line yang" wx:if="{{item === 7 || item === 9}}">
+          <view class="bar-full"></view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="action-area">
+    <button 
+      class="action-btn {{status === 'complete' ? 'finish-btn' : ''}}" 
+      hover-class="btn-hover" 
+      bindtap="handleAction"
+      disabled="{{status === 'loading'}}"
+    >
+      {{status === 'complete' ? '查看卦解' : '点击摇卦'}}
+    </button>
+  </view>
+</view>
