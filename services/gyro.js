@@ -13,8 +13,8 @@ class GyroService {
             settle: []
         };
         this.settleTimer = null;
-        this.threshold = 3.0; // rad/s (per requirement 2.1.1.1 > 3 rad/s)
-        this.settleThreshold = 0.5; // rad/s
+        this.threshold = 1.5; // rad/s (Lowered from 3.0 for better sensitivity)
+        this.settleThreshold = 1.0; // rad/s (Relaxed from 0.5)
         this.settleTime = 500; // ms
 
         // Bind in constructor so we can effectively unbind
@@ -26,24 +26,32 @@ class GyroService {
     }
 
     start() {
-        if (this.isListening) return;
-
-        // Check support
-        if (!this.isSupported()) {
-            console.warn('Gyroscope API not supported');
-            return;
-        }
-
-        wx.startGyroscope({
-            interval: 'game',
-            success: () => {
-                this.isListening = true;
-                wx.onGyroscopeChange(this._handleGyroChange);
-                console.log('GyroService started');
-            },
-            fail: (err) => {
-                console.error('Failed to start gyro:', err);
+        return new Promise((resolve, reject) => {
+            if (this.isListening) {
+                resolve();
+                return;
             }
+
+            // Check support
+            if (!this.isSupported()) {
+                console.warn('Gyroscope API not supported');
+                reject(new Error('Device not supported'));
+                return;
+            }
+
+            wx.startGyroscope({
+                interval: 'game',
+                success: () => {
+                    this.isListening = true;
+                    wx.onGyroscopeChange(this._handleGyroChange);
+                    console.log('GyroService started');
+                    resolve();
+                },
+                fail: (err) => {
+                    console.error('Failed to start gyro:', err);
+                    reject(err);
+                }
+            });
         });
     }
 

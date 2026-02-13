@@ -1,4 +1,5 @@
-<view class="container">
+<view class="container {{themeClass}}">
+  <music-control />
   <!-- Loading State -->
   <view class="loading-state" wx:if="{{loading}}">
     <view class="spinner"></view>
@@ -35,6 +36,25 @@
     <!-- General Analysis Card -->
     <view class="card analysis-card">
       <view class="card-title">综合分析</view>
+      
+      <!-- Score & Tags Section -->
+      <view class="analysis-meta" wx:if="{{result.score}}">
+        <view class="score-container">
+            <text class="score-label">吉凶指数</text>
+            <progress class="score-bar" percent="{{result.score}}" stroke-width="6" border-radius="4" activeColor="var(--theme-primary)" backgroundColor="rgba(0,0,0,0.05)" />
+            <text class="score-value">{{result.score}}</text>
+        </view>
+      </view>
+
+      <view class="tags-container" wx:if="{{result.keywords}}">
+        <block wx:for="{{result.keywords}}" wx:key="index">
+            <view class="result-tag keyword-tag">{{item}}</view>
+        </block>
+        <block wx:for="{{result.advice_tags}}" wx:key="index">
+            <view class="result-tag advice-tag">{{item}}</view>
+        </block>
+      </view>
+
       <view class="analysis-section">
         <text class="analysis-text">{{result.analysis.overall}}</text>
       </view>
@@ -83,7 +103,6 @@
         <view class="hex-symbol">{{result.changing_hexagram.symbol}}</view>
         <view class="hex-text">
           <text class="text-content">{{result.changing_hexagram.judgment}}</text>
-          <text class="text-content sub">{{result.changing_hexagram.interpretation}}</text>
         </view>
       </view>
     </view>

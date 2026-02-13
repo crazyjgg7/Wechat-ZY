@@ -1,5 +1,9 @@
 <view class="container">
-  <view class="title">CyberYJ 六爻卜卦</view>
+  <music-control />
+  <music-control />
+  <view class="title-group">
+      <text class="sub-title">赛博易经</text>
+      <text class="main-title">六爻卜卦</text>
+  </view>
   <button class="start-btn" hover-class="btn-hover" bindtap="startDivination">开始卜卦</button>
-  <button class="history-btn" hover-class="btn-hover" bindtap="viewHistory">我的卜卦</button>
 </view>

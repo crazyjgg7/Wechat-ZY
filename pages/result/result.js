@@ -7,17 +7,38 @@ Page({
         error: false,
         errorMsg: '',
         result: null, // Full API response
-        isHistory: false
+        isHistory: false,
+        sceneId: '',
+        sceneName: '',
+        question: ''
     },
 
     onLoad(options) {
+        // 接收场景和问题参数
+        const sceneId = options.scene || '';
+        const sceneName = decodeURIComponent(options.sceneName || '');
+        const question = decodeURIComponent(options.question || '');
+
+        // Compute theme class
+        const themeClass = sceneId ? `theme-${sceneId}` : '';
+
+        this.setData({
+            sceneId: sceneId,
+            sceneName: sceneName,
+            question: question,
+            themeClass: themeClass
+        });
+
         if (options.id) {
             // Load from History
             const record = storage.getHistoryById(options.id);
             if (record) {
                 // Format timestamp for display if needed, but wxml can handle or use wxs
                 this.setData({
-                    result: record,
+                    result: record.result,
+                    sceneId: record.sceneId || '',
+                    sceneName: record.sceneName || '',
+                    question: record.question || '',
                     loading: false,
                     isHistory: true
                 });
@@ -50,14 +71,17 @@ Page({
     fetchResult(coins) {
         this.setData({ loading: true, error: false });
 
-        interpretHexagram(coins)
+        interpretHexagram(coins, this.data.question, this.data.sceneId)
             .then(res => {
                 // Enrich result with metadata for storage
                 const enrichedResult = {
-                    ...res,
                     timestamp: Date.now(),
                     id: Date.now().toString(),
-                    coins: coins
+                    coins: coins,
+                    sceneId: this.data.sceneId,
+                    sceneName: this.data.sceneName,
+                    question: this.data.question,
+                    result: res // API response
                 };
 
                 // Save to History
@@ -65,7 +89,7 @@ Page({
 
                 this.setData({
                     loading: false,
-                    result: enrichedResult, // Use 'result' instead of 'hexagram' to align with rich structure
+                    result: res, // Use API response directly for display
                     isHistory: false
                 });
             })

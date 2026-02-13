@@ -3,14 +3,14 @@
     <view class="history-list">
       <view class="history-item" wx:for="{{history}}" wx:key="id" bindtap="viewDetail" data-id="{{item.id}}">
         <view class="item-left">
-          <view class="hex-symbol">{{item.hexagram.symbol}}</view>
+          <view class="hex-symbol">{{item.result.hexagram.symbol}}</view>
         </view>
         <view class="item-content">
           <view class="item-header">
-            <text class="hex-name">{{item.hexagram.name}}卦</text>
+            <text class="hex-name">{{item.result.hexagram.name}}卦</text>
             <text class="date">{{item.dateStr}}</text>
           </view>
-          <text class="judgment">{{item.hexagram.judgment}}</text>
+          <text class="judgment">{{item.result.hexagram.judgment}}</text>
         </view>
         <view class="item-right">
           <text class="arrow">></text>

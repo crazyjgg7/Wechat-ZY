@@ -1,35 +1,94 @@
-
-.title {
-  font-size: 48rpx;
-  margin-bottom: 100rpx;
-  color: var(--text-main);
-  font-weight: bold;
+/** index.wxss **/
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 0; 
+  background: var(--color-mist);
 }
 
-.start-btn, .history-btn {
-  background-color: var(--primary-color);
-  color: #fff;
-  width: 80%;
-  height: 96rpx;
-  line-height: 96rpx;
-  border-radius: var(--border-radius);
+.title-group {
+  display: flex;
+  flex-direction: row-reverse; /* Right to Left visual order if not using writing-mode on container, but let's use writing-mode on items or container */
+  /* Actually with vertical-rl on container:
+     first child is Rightmost. 
+     second child is Left of first.
+  */
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  align-items: flex-start; /* Vertical alignment in horizontal mode, but here it's Horizontal alignment in vertical mode? 
+                              No, inside vertical-rl: 
+                              align-items controls alignment along the Cross Axis (Horizontal).
+                              Wait, Main Axis is Vertical. Cross Axis is Horizontal (Right to Left).
+                              So align-items ends up controlling vertical alignment of lines? 
+                              Let's test. 
+                              Actually, just putting writing-mode on container is easiest.
+  */
+  margin-bottom: 120rpx;
+  height: auto;
+}
+
+.sub-title {
   font-size: 36rpx;
-  font-weight: 500;
+  color: var(--color-ink-light);
+  letter-spacing: 12rpx;
+  margin-left: 40rpx; /* Increased space between lines */
+  margin-top: 0;      /* Removed negative margin to prevent overlap */
+  font-weight: normal;
+}
+
+.main-title {
+  font-size: 80rpx;
+  font-weight: bold;
+  color: var(--color-ink);
+  letter-spacing: 24rpx;
+  border-left: 4rpx solid var(--color-gold);
+  padding-left: 40rpx;
+}
+
+.start-btn {
+  /* Tai Chi / Alchemy Furnace Style Button */
+  width: 260rpx;
+  height: 260rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #3e8e84, var(--color-jade));
+  color: #fff;
+  font-size: 40rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  margin-bottom: 20px;
+  box-shadow: 0 10rpx 30rpx rgba(44, 95, 88, 0.4), inset 0 0 20rpx rgba(255,255,255,0.2);
+  border: 4rpx solid var(--color-gold);
+  position: relative;
+  z-index: 10;
+  
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 12rpx;
 }
 
-.history-btn {
-  background-color: transparent;
-  color: var(--primary-color);
-  border: 1px solid var(--primary-color);
-  box-sizing: border-box;
+/* Decorative Ring around button */
+.start-btn::before {
+  content: '';
+  position: absolute;
+  top: -20rpx;
+  left: -20rpx;
+  right: -20rpx;
+  bottom: -20rpx;
+  border: 2rpx dashed var(--color-gold);
+  border-radius: 50%;
+  animation: spin 20s linear infinite;
+  opacity: 0.6;
 }
 
 .btn-hover {
-  opacity: 0.8;
-  transform: scale(0.98);
+  transform: scale(0.95);
+  box-shadow: 0 6rpx 20rpx rgba(44, 95, 88, 0.5);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
